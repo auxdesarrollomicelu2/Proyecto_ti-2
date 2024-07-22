@@ -108,7 +108,7 @@ body {
 }
 
 .custom_nav-container .navbar-nav .nav-item .nav-link {
-  padding: 10px 30px;
+  padding: 10px 10px;
   color: #ffffff;
   text-align: center;
   position: relative;
@@ -119,7 +119,7 @@ body {
   display: none;
   position: absolute;
   bottom: 7px;
-  left: 50%;
+  left: 45%;
   width: 17px;
   height: 4px;
 
