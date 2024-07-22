@@ -1,0 +1,61 @@
+#tbl{
+    border: 1px solid;
+    text-align: left;
+    
+}
+th{
+    background-color:#000000;
+    column-span: 4;
+    text-align: left;
+    font-size: 16px;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+td{
+    border: 1px solid;
+
+}
+h2{
+    
+    color:black;
+    font-family: 'Roboto', sans-serif;
+
+    font-size: 60px;
+}
+tr{
+    
+}
+.icon-custom-color {
+    color: #F19C49;
+  }
+.R{
+color: rgb(208, 8, 8);
+}
+.button-container {
+    display: flex; /* Utiliza flexbox para alinear elementos en línea */
+    margin-left: -100px;
+}
+
+.button-container button {
+    
+    gap: 10px; /* Espacio entre los botones */
+    margin-left: -5px; /* Ajuste a
+    margin-right: 10px; /* Espacio entre los botones */
+    width: 180px; /* Ancho específico para los botones */
+    margin-right: 60px; /* Espacio entre los botones */
+    padding: 20px; /* Padding interno para el contenido del botón */
+}
+#button {
+    font-size: 18px; /* Aumenta el tamaño del icono */
+    padding: 5px;   /* Aumenta el tamaño del botón */
+    width: 45px;
+}
+.table-wrapper {
+    max-height: 600px; /* Ajusta la altura máxima según tus necesidades */
+    
+    overflow-y: auto; /* Scroll horizontal */
+    scrollbar-color: #171616 #f1f1f155;
+    table-layout: fixed;
+    width: 100%;
+
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- slider stylesheet -->
+<link rel="stylesheet" type="text/css"
+href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
+
+<!-- bootstrap core css -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css')}}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+<!-- fonts style -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet" />
+<!-- responsive style -->
+<link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/escritorio.css')}}" rel="stylesheet" />
+    <title>Portatiles</title>
+</head>
+<body>
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section">
+          <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg custom_nav-container ">
+              <a class="navbar-brand" href="{{ url_for('ingresoactivos')}}">
+                <span>
+                  Micelu.co
+                </span>
+              </a>
+              <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+    
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                  <ul class="navbar-nav  ">
+                    <li class="nav-item active">
+                      <a class="nav-link" href="{{ url_for('ingreso')}}">INGRESO </a>
+                    </li>
+                    <li class="nav-item ">
+                      <a class="nav-link" href="{{ url_for('activos')}}"> ACTIVOS  <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/logout">Cerrar sesion</a>
+                    </li>
+                    
+                  </ul>
+                </div>
+              </div>
+              
+            </nav>
+          </div>
+        </header>
+        <!-- end header section -->
+     
+      </div>
+    <div class="container-fluid">
+      <br>
+      <h1 class="text-center">Portatiles</h1>
+      <br>
+      <table id="tbl" class="table table-striped- table-group-divider">
+
+        <thead class="border">
+          <tbody>
+            <tr>
+              <th>Area</th>
+              <th>Sede</th>
+              <th>Modelo/Marca</th>
+              <th class="text-center">Serial</th>
+              <th>Estado</th>
+              <th>Tipo de Activo</th>
+              <th>Fecha de Compra</th>
+              <th>Propietario</th>
+              <th>Linea Movil</th>
+              <th>Clave del Equipo</th>
+              <th>Notas de condicion</th>
+              <th>Correo Vinculado</th>
+              <th>Password Correo</th>
+            </tr>
+            </thead>
+          <tbody>
+            {% for dispositivo in dispositivos %}
+            <tr>
+              <td>{{ dispositivo.area}}</td>
+              <td>{{ dispositivo.sede}}</td>
+              <td>{{ dispositivo.modelo}}</td>
+              <td>{{ dispositivo.serial}}</td>
+              <td>{{ dispositivo.estado}}</td>
+              <td>{{dispositivo.tipoActivo}}</td>
+              <td>{{dispositivo.fechaCompra}} </td>
+              <td>{{dispositivo.colaborador}} </td>
+              <td></td>
+              <td>{{dispositivo.contrasena}} </td>
+              <td>{{dispositivo.notas}} </td>
+              <td>{{dispositivo.correo}} </td>
+              <td> </td>
+    
+            </tr>
+            {% endfor %}
+    
+        </tbody>
+      </table>
+    </div>
+    <div class="activosprincipal">
+ 
+      <div class="activos">
+   
+        <div class="container-fluid">
+          <a href="{{ url_for('escritorio') }}" class="btn btn-dark btn-custom">
+            <i class="bi bi-newspaper"></i> Pc Escritorio
+        </a>
+        </div>
+        <div class="container-fluid">
+           <a href="{{ url_for('portatiles') }}" class="btn btn-dark btn-custom">
+          <i class="bi bi-newspaper"></i> Pc Portatiles</a>
+        </div>
+        <div class="container-fluid">
+          <a href="{{ url_for('telefono') }}" class="btn btn-dark btn-custom">
+         <i class="bi bi-newspaper"></i> Smartphone
+       </a>
+       </div>
+       <div class="container-fluid">
+        <a href="{{ url_for('impresoras') }}" class="btn btn-dark btn-custom">
+       <i class="bi bi-newspaper"></i> Impresoras
+     </a>
+     </div>
+  </body>
+</html>
