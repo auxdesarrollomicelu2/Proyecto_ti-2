@@ -178,22 +178,20 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="movil">linea Movil:</label>
-              <input type="number" id="movil" name="movil">
-            </div>
-
-            <div class="form-group">
               <label for="tipo_activo">Tipo de Activo:</label>
               <select id="tipo_activo" name="tipo_activo" required>
                 <option value="">Seleccione un tipo de activo</option>
                 <option value="Escritorio">PC Escritorio</option>
                 <option value="Portatil">PC Portatil</option>
                 <option value="Impresora">Impresora</option>
-                <option value="Smartphone">Teléfono</option>
+                <option value="Smartphone">Smartphone</option>
                 <option value="Accesorio">Accesorio</option>
-
-                <!-- pendiente de crear lista de todos los activos que se van a catalogar-->
               </select>
+            </div>
+   
+            <div class="form-group" id="movil-group">
+              <label for="movil">Línea Móvil:</label>
+              <input type="number" id="movil" name="movil">
             </div>
 
             <div class="form-group">
@@ -215,6 +213,21 @@
 
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var tipoActivo = document.getElementById('tipo_activo');
+      var movilGroup = document.getElementById('movil-group');
+    
+      tipoActivo.addEventListener('change', function() {
+        if (this.value === 'Smartphone') {
+          movilGroup.style.display = 'block';
+        } else {
+          movilGroup.style.display = 'none';
+          document.getElementById('movil').value = ''; // Limpiar el campo cuando se oculta
+        }
+      });
+    });
+    </script>
   <div id="alertContainer" style="position: fixed; top:40px; left: 80%; transform: translateX(-50%); z-index: 1050;">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}

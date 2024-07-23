@@ -88,6 +88,12 @@ def index():
 def ingresoactivos():
     if request.method == "POST":
         try:
+            movil = request.form.get("movil", "")
+            tipo_activo = request.form.get("tipo_activo")
+            
+            # Si el tipo de activo no es Smartphone, establecemos movil como una cadena vacía
+            if tipo_activo != "Smartphone":
+                movil = ""
             nuevo_dispositivo = Dispositivos(
                 area=request.form["area"],
                 sede=request.form["sede"],
@@ -208,7 +214,7 @@ def portatiles():
             correo=request.form["correo"],
             notas=request.form["notas"]
         )
-    #  agregamos los datos para luego ser guardados en la base de datos
+    #agregamos los datos para luego ser guardados en la base de datos
         db.session.add(nuevo_dispositivo)
         db.session.commit()
         return "Información guardada con éxito"

@@ -119,10 +119,11 @@ body {
   display: none;
   position: absolute;
   bottom: 7px;
-  left: 45%;
+  left: 50%;
   width: 17px;
   height: 4px;
-
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
   background-color: #ff4f5a;
   border-radius: 5px;
 }
@@ -758,6 +759,7 @@ button:hover {
   justify-content: center;
   align-items: center;
   height: 20vh;
+  
 }
 
 .activos {
@@ -800,6 +802,6 @@ button {
   
 }
 
-button:hover {
+.btn-custom:hover {
   background-color: #ff4f5a;
 }
