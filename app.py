@@ -47,6 +47,8 @@ class Dispositivos(db.Model):
     tipoActivo = db.Column(db.String(100), nullable=False)
     correo = db.Column(db.String(100), nullable=False)
     notas = db.Column(db.Text, nullable=True)
+    activos = db.Column(db.Boolean, default=True)
+    #habilitado= db.Column(db.Boolean, nullable=False,default=True)
 
 
 # creamos la ruta utilizando los metodos http
@@ -128,6 +130,19 @@ def ingresoactivos():
 @app.route("/activos", methods=["GET", "POST"])
 def activos():
     if request.method == "POST":
+        if 'toggle_active' in request.form:
+            # Manejar la activación/desactivación
+            idusuario = request.form.get('idusuario')
+            dispositivo = Dispositivos.query.get_or_404(idusuario)
+            dispositivo.activos = not dispositivo.activos
+            try:
+                db.session.commit()
+                flash("Estado del dispositivo actualizado", "success")
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
+            return redirect(url_for('activos'))
+        
         try:
             nuevo_dispositivo = Dispositivos(
                 area=request.form["area"],
@@ -164,6 +179,11 @@ class Colaboradores(db.Model):
 @app.route('/actualizar/<int:idusuario>', methods=['GET', 'POST'])
 def actualizar(idusuario):
     dispositivo = Dispositivos.query.get_or_404(idusuario)
+   
+    # Obtener todos los colaboradores únicos
+    colaboradores = db.session.query(Dispositivos.colaborador).distinct().all()
+    colaboradores = [c[0] for c in colaboradores if c[0]]  # Eliminar valores nulos o vacíos
+   
     if request.method == 'POST':
         try:
             dispositivo.area = request.form['area']
@@ -178,16 +198,15 @@ def actualizar(idusuario):
             dispositivo.tipoActivo = request.form['tipo_activo']
             dispositivo.correo = request.form['correo']
             dispositivo.notas = request.form.get('notas')
-
+           
             db.session.commit()
             flash('Dispositivo actualizado con éxito', 'success')
             return redirect(url_for('activos'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Error al actualizar el dispositivo: {str(e)}', 'error')
-
-    return render_template('actualizar.html', dispositivo=dispositivo)
-
+   
+    return render_template('actualizar.html', dispositivo=dispositivo, colaboradores=colaboradores)
 
 @app.route('/escritorio')
 def escritorio():
@@ -274,6 +293,11 @@ def telefono():
         return "Información guardada con éxito"
     else:
         return render_template("telefonos.html", dispositivos=dispositivos)
+    
+@app.route('/inhabilitados')
+def inhabilitado():
+    dispositivos_inactivos = Dispositivos.query.filter_by(activos=False).all()
+    return render_template("inhabilitados.html", dispositivos=dispositivos_inactivos)
 
 
 if __name__ == '__main__':

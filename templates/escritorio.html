@@ -59,7 +59,13 @@
                   <a class="nav-link" href="{{ url_for('activos')}}"> ACTIVOS <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/logout">Cerrar sesion</a>
+
+                <li class="nav-item ">
+                  <a class="nav-link" href="{{ url_for('inhabilitado')}}">INACTIVOS <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+
+                  <a class="nav-link" href="/logout">CERRAR SESION</a>
                 </li>
 
               </ul>
@@ -76,6 +82,17 @@
     <br>
     <h1 class="text-center">PC Escritorio</h1>
     <br>
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-3">
+        <div class="input-group">
+          <input id="searchInput" class="form-control border-dark with-icon" type="search" placeholder="Buscar activos"
+            aria-label="Buscar">
+          <button class="btnn1" type="button">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <table id="tbl" class="table table-striped- table-group-divider">
       <thead class="border">
       <tbody>
@@ -115,36 +132,53 @@
           <td>
             <a href="{{ url_for('actualizar', idusuario=dispositivo.idusuario) }} " class="btn btn-info">
               <i class="bi bi-pencil-square"></i>
-          </a>
-        </td> 
+            </a>
+          </td>
 
         </tr>
         {% endfor %}
-        
+
       </tbody>
     </table>
   </div>
   <div class="activosprincipal">
- 
+
     <div class="activos">
- 
+
       <div class="container-fluid">
         <a href="{{ url_for('escritorio') }}" class="btn btn-dark btn-custom">
           <i class="bi bi-newspaper"></i> Pc Escritorio</a>
       </div>
       <div class="container-fluid">
-         <a href="{{ url_for('portatiles') }}" class="btn btn-dark btn-custom">
-        <i class="bi bi-newspaper"></i> Pc Portatiles</a>
+        <a href="{{ url_for('portatiles') }}" class="btn btn-dark btn-custom">
+          <i class="bi bi-newspaper"></i> Pc Portatiles</a>
       </div>
       <div class="container-fluid">
         <a href="{{ url_for('telefono') }}" class="btn btn-dark btn-custom">
-       <i class="bi bi-newspaper"></i> Smartphone</a>
+          <i class="bi bi-newspaper"></i> Smartphone</a>
       </div>
-     <div class="container-fluid">
-      <a href="{{ url_for('impresoras') }}" class="btn btn-dark btn-custom">
-        <i class="bi bi-newspaper"></i> Impresoras
-   </a>
-   </div>
+      <div class="container-fluid">
+        <a href="{{ url_for('impresoras') }}" class="btn btn-dark btn-custom">
+          <i class="bi bi-newspaper"></i> Impresoras
+        </a>
+      </div>
+      <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+          let searchQuery = this.value.toLowerCase();
+          let table = document.getElementById('tbl');
+          let rows = table.getElementsByTagName('tr');
+    
+          for (let i = 1; i < rows.length; i++) {
+            let row = rows[i];
+            let rowData = row.textContent.toLowerCase();
+            if (rowData.includes(searchQuery)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          }
+        });
+      </script>
 </body>
 
 </html>

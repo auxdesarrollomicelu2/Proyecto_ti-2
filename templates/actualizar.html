@@ -30,6 +30,7 @@
     <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet" />
     <!-- responsive style -->
     <link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet" />
+    
     <link href="{{ url_for('static', filename='css/escritorio.css')}}" rel="stylesheet" />
 </head>
 
@@ -61,7 +62,7 @@
                                             class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/logout">Cerrar sesion</a>
+                                    <a class="nav-link" href="/logout">CERRAR SESION</a>
                                 </li>
 
                             </ul>
@@ -74,85 +75,162 @@
         <!-- end header section -->
 
     </div>
-    <div class="ingreso">
-        <div class="form-container">
-            <h2>Editar Dispositivo</h2>
-            <!----- buscamos el dispositivo en la base de datos con el id proporcionado  y lo asignamos el dispositivo a la variable-->
-            <form method="POST" action="{{ url_for('actualizar', idusuario=dispositivo.idusuario) }}">
-                <div class="form-group">
-                    <label for="area">Área:</label>
-                    <input type="text" id="area" name="area" value="{{ dispositivo.area }}" required>
-                </div>
+    <div class="ingresoprincipal">
+        <div class="ingreso">
+            <div class="form-container">
+                <h1>Editar Dispositivo</h1>
 
-                <div class="form-group">
-                    <label for="colaborador">Colaborador:</label>
-                    <input type="text" id="colaborador" name="colaborador" value="{{ dispositivo.colaborador }}">
-                </div>               
+                <form method="POST" action="{{ url_for('actualizar', idusuario=dispositivo.idusuario) }}">
+                    <div class="form-group">
+                        <div class="form-grid">
+                            <label for="area">Área:</label>
+                            <select id="area" name="area" required>
+                                <option value="">Seleccione un área</option>
+                                <option value="Gerencia" {% if dispositivo.area=="Gerencia" %}selected{% endif %}>
+                                    GERENCIA</option>
+                                <option value="Comercial" {% if dispositivo.area=="Comercial" %}selected{% endif %}>
+                                    COMERCIAL</option>
+                                <option value="Online" {% if dispositivo.area=="Online" %}selected{% endif %}>ONLINE
+                                </option>
+                                <option value="Servicio" {% if dispositivo.area=="Servicio" %}selected{% endif %}>
+                                    SERVICIO TECNICO</option>
+                                <option value="Contabilidad" {% if dispositivo.area=="Contabilidad" %}selected{% endif
+                                    %}>CONTABILIDAD</option>
+                                <option value="Calidad" {% if dispositivo.area=="Calidad" %}selected{% endif %}>CALIDAD
+                                </option>
+                                <option value="Compras" {% if dispositivo.area=="Compras" %}selected{% endif %}>COMPRAS
+                                </option>
+                                <option value="Tesoreria" {% if dispositivo.area=="Tesoreria" %}selected{% endif %}>
+                                    TESORERIA</option>
+                                <option value="Ecommerce" {% if dispositivo.area=="Ecommerce" %}selected{% endif %}>
+                                    ECOMMERCE</option>
+                                <option value="Marketing" {% if dispositivo.area=="Marketing" %}selected{% endif %}>
+                                    MARKETING</option>
+                                <option value="Gestion" {% if dispositivo.area=="Gestion" %}selected{% endif %}>GESTION
+                                    HUMANA</option>
+                                <option value="Posventa" {% if dispositivo.area=="Posventa" %}selected{% endif %}>
+                                    POSVENTA</option>
+                                <option value="Pendiente" {% if dispositivo.area=="Pendiente" %}selected{% endif %}>
+                                    PENDIENTE</option>
+                                <option value="TI" {% if dispositivo.area=="TI" %}selected{% endif %}>TI</option>
+                                <option value="Lider ON" {% if dispositivo.area=="Lider ON" %}selected{% endif %}>LIDER
+                                    ON</option>
+                                <option value="Accesorios Med" {% if dispositivo.area=="Accesorios Med" %}selected{%
+                                    endif %}>ACCESORIOS MD</option>
+                                <option value="Lider BG" {% if dispositivo.area=="Lider BG" %}selected{% endif %}>LIDER
+                                    BG</option>
+                                <option value="Bodega TM" {% if dispositivo.area=="Bodega TM" %}selected{% endif %}>
+                                    BODEGA TM</option>
+                                <option value="Facturacion" {% if dispositivo.area=="Facturacion" %}selected{% endif %}>
+                                    FACTURACIÓN</option>
+                                <option value="Caja" {% if dispositivo.area=="Caja" %}selected{% endif %}>CAJA</option>
+                                <option value="Bodega BG" {% if dispositivo.area=="Bodega BG" %}selected{% endif %}>
+                                    BODEGA BG</option>
+                                <option value="Desarrollo" {% if dispositivo.area=="Desarrollo" %}selected{% endif %}>
+                                    DESARROLLO</option>
+                                <option value="Stm" {% if dispositivo.area=="Stm" %}selected{% endif %}>STM</option>
+                                <option value="Contabilidad LMP" {% if dispositivo.area=="Contabilidad LMP" %}selected{%
+                                    endif %}>CONTABILIDAD LAMPER</option>
+                            </select>
+                        </div>
 
-                <div class="form-group">
-                    <label for="sede">Sede:</label>
-                    <select id="sede" name="sede">
-                        <option value="Medellin" {% if dispositivo.sede == 'Medellin' %}selected{% endif %}>Tienda Medellin</option>
-                        <option value="Bogota" {% if dispositivo.sede == 'Bogota' %}selected{% endif %}>Tienda Bogota</option>
-                        <option value="Bmedellin" {% if dispositivo.sede == 'Bmedellin' %}selected{% endif %}>Bodega Medellin</option>
-                        <option value="Bbogota" {% if dispositivo.sede == 'Bbogota' %}selected{% endif %}>Bodega Bogota</option>
-                    </select>
-                </div>
+                        <div class="form-group">
+                            <label for="colaborador">Colaborador:</label>
+                            <select id="colaborador" name="colaborador" required>
+                                {% for colaborador in colaboradores %}
+                                <option value="{{ colaborador }}" {% if colaborador==dispositivo.colaborador
+                                    %}selected{% endif %}>
+                                    {{ colaborador }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="sede">Sede:</label>
+                            <select id="sede" name="sede">
+                                <option value="Medellin" {% if dispositivo.sede=='Medellin' %}selected{% endif %}>Tienda
+                                    Medellin</option>
+                                <option value="Bogota" {% if dispositivo.sede=='Bogota' %}selected{% endif %}>Tienda
+                                    Bogota</option>
+                                <option value="Bmedellin" {% if dispositivo.sede=='Bmedellin' %}selected{% endif %}>
+                                    Bodega Medellin</option>
+                                <option value="Bbogota" {% if dispositivo.sede=='Bbogota' %}selected{% endif %}>Bodega
+                                    Bogota</option>
+                            </select>
+                        </div>
 
-                <div class="form-group">
-                    <label for="modelo_marca">Modelo/Marca:</label>
-                    <input type="text" id="modelo_marca" name="modelo_marca" value="{{ dispositivo.modelo }}">
-                </div>
+                        <div class="form-group">
+                            <label for="modelo_marca">Modelo/Marca:</label>
+                            <input type="text" id="modelo_marca" name="modelo_marca" value="{{ dispositivo.modelo }}">
+                        </div>
 
+                        <div class="form-group">
+                            <label for="serial">Serial:</label>
+                            <input type="text" id="serial" name="serial" value="{{ dispositivo.serial }}">
+                        </div>
 
+                        <div class="form-group">
+                            <label for="movil">Línea Móvil:</label>
+                            <input type="text" id="movil" name="movil" value="{{ dispositivo.movil }}">
+                        </div>
 
-                <div class="form-group">
-                    <label for="serial">Serial:</label>
-                    <input type="text" id="serial" name="serial" value="{{ dispositivo.serial }}">
-                </div>
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña:</label>
+                            <input type="text" id="contrasena" name="contrasena" value="{{ dispositivo.contrasena }}">
+                        </div>
 
-                <div class="form-group">
-                    <label for="movil">Línea Móvil:</label>
-                    <input type="text" id="movil" name="movil" value="{{ dispositivo.movil }}">
-                </div>
+                        <div class="form-group">
+                            <label for="fecha_compra">Fecha de Compra:</label>
+                            <input type="date" id="fecha_compra" name="fecha_compra"
+                                value="{{ dispositivo.fechaCompra }}">
+                        </div>
 
-                <div class="form-group">
-                    <label for="contrasena">Contraseña:</label>
-                    <input type="text" id="contrasena" name="contrasena" value="{{ dispositivo.contrasena }}">
-                </div>
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select id="estado" name="estado">
+                                <option value="Disponible" {% if dispositivo.estado=='Disponible' %}selected{% endif %}>
+                                    Disponible</option>
+                                <option value="En Uso" {% if dispositivo.estado=='En Uso' %}selected{% endif %}>En Uso
+                                </option>
+                                <option value="Mantenimiento" {% if dispositivo.estado=='Mantenimiento' %}selected{%
+                                    endif %}>Reparación</option>
+                            </select>
+                        </div>
 
-                <div class="form-group">
-                    <label for="fecha_compra">Fecha de Compra:</label>
-                    <input type="date" id="fecha_compra" name="fecha_compra" value="{{ dispositivo.fechaCompra }}">
-                </div>
+                        <div class="form-group">
+                            <label for="tipo_activo">Tipo de Activo:</label>
+                            <select id="tipo_activo" name="tipo_activo">
+                                <option value="Escritorio" {% if dispositivo.tipo_activo=='Escritorio' %}selected{%
+                                    endif %}>PC Escritorio</option>
+                                <option value="Portatil" {% if dispositivo.tipo_activo=='Portatil' %}selected{% endif
+                                    %}>PC Portatil</option>
+                                <option value="Smartphone" {% if dispositivo.tipo_activo=='Smartphone' %}selected{%
+                                    endif %}>Smartphone</option>
+                                <option value="Impresora" {% if dispositivo.tipo_activo=='Impresora' %}selected{% endif
+                                    %}>Impresoras</option>
+                                <option value="Accesorio" {% if dispositivo.tipo_activo=='Accesorio' %}selected{% endif
+                                    %}>Accesorios</option>
+                            </select>
+                        </div>
 
-                <div class="form-group">
-                    <label for="estado">Estado:</label>
-                    <input type="text" id="estado" name="estado" value="{{ dispositivo.estado }}">
-                </div>
+                        <div class="form-group">
+                            <label for="correo">Correo:</label>
+                            <input type="email" id="correo" name="correo" value="{{ dispositivo.correo }}">
+                        </div>
 
-                <div class="form-group">
-                    <label for="tipo_activo">Tipo de Activo:</label>
-                    <input type="text" id="tipo_activo" name="tipo_activo" value="{{ dispositivo.tipoActivo }}">
-                </div>
+                        <div class="form-group">
+                            <label for="notas">Notas:</label>
+                            <textarea id="notas" name="notas" rows="4" cols="10">{{ dispositivo.notas }}</textarea>
+                        </div>
 
-                <div class="form-group">
-                    <label for="correo">Correo:</label>
-                    <input type="email" id="correo" name="correo" value="{{ dispositivo.correo }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="notas">Notas:</label>
-                    <textarea id="notas" name="notas">{{ dispositivo.notas }}</textarea>
-                </div>
-
-                <button type="submit">Actualizar Dispositivo</button>
-            </form>
-            <div class="form-grid">
-                <div class="form-group">
-                </div>
+                        <button type="submit">Actualizar Dispositivo</button>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
+
 
 </body>
 
