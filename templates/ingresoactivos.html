@@ -64,6 +64,9 @@
                   <a class="nav-link" href="{{ url_for('activos')}}"> ACTIVOS <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item ">
+                  <a class="nav-link" href="{{ url_for('colaborador')}}"> COLABORADORES <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item ">
                   <a class="nav-link" href="{{ url_for('inhabilitado')}}">INACTIVOS <span
                       class="sr-only">(current)</span></a>
                 </li>
@@ -125,7 +128,7 @@
             </div>
 
             <div class="form-group">
-              <label for="colaborador">Colaborador:</label>
+              <label for="colaborador">Colaborador:</label required>
 
               <select id="colaborador" name="colaborador">
                 <option value="">Seleccione un Colaborador</option>

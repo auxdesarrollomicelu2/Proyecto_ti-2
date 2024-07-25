@@ -59,6 +59,9 @@
                   <a class="nav-link" href="{{ url_for('activos')}}"> ACTIVOS <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
+                  <li class="nav-item ">
+                    <a class="nav-link" href="{{ url_for('colaborador')}}"> COLABORADORES <span class="sr-only">(current)</span></a>
+                  </li>
 
                 <li class="nav-item ">
                   <a class="nav-link" href="{{ url_for('inhabilitado')}}">INACTIVOS <span class="sr-only">(current)</span></a>
@@ -110,6 +113,7 @@
           <th>Notas de condicion</th>
           <th>Correo Vinculado</th>
           <th>Password Correo</th>
+          <th>Estado</th>
           <th>Acciones</th>
         </tr>
         </thead>
@@ -129,6 +133,16 @@
           <td>{{dispositivo.notas}} </td>
           <td>{{dispositivo.correo}} </td>
           <td></td>
+          <td>
+            <form action="{{ url_for('activos') }}" method="POST">
+              <input type="hidden" name="toggle_active" value="1">
+              <input type="hidden" name="idusuario" value="{{ dispositivo.idusuario }}">
+              <label class="switch">
+              <input type="checkbox" {% if dispositivo.activos %}checked{% endif %} onchange="this.form.submit()">
+              <span class="slider round"></span>
+              </label>
+              </form>
+          </td>
           <td>
             <a href="{{ url_for('actualizar', idusuario=dispositivo.idusuario) }} " class="btn btn-info">
               <i class="bi bi-pencil-square"></i>

@@ -11,6 +11,10 @@ app.config["SECRET_KEY"] = "Secret"
 # Configuración de la base de datos PostgreSQL
 # postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway'
+app.config['SQLALCHEMY_BINDS'] = {
+    'db2': 'postgresql://postgres:aAB2Be35CBAd2GgA5*DdC45FaCf26G44@viaduct.proxy.rlwy.net:58920/railway',  # Base de EMPLEADOS
+    'db3': 'postgresql://postgres:E6C13EfeAbaFd2GA4fgCcAdC*g13324B@monorail.proxy.rlwy.net:25301/railway',  # Base de logistica
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # try:
@@ -29,6 +33,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 # definimos el modelo para la tabla y mapeamos la tabla dispositivos
 # debemos especificar el es quema en la base de datos para encontrar la tabla solicitada
+
+class Empleados(db.Model):
+    __bind_key__ = 'db2'
+    
+
+    # Campos de la tabla Empleados
+    id = db.Column(db.String(100), primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    sede = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    isAdmin = db.Column(db.Boolean, default=False)
+    jefeTienda = db.Column(db.Boolean, default=False)
+    isSede = db.Column(db.Boolean, default=False)
+    isTV = db.Column(db.Boolean, default=False)
+    password_secret=db.Column(db.String(60))
+    cedula=db.Column(db.String(100))
+    cargo=db.Column(db.Enum('Admin', 'jefeTienda', 'Sede','TV','servicioTecnico','vendedorMedellin','vendedorBogota','encargadoBodega','domiciliario','RH',name='cargo'))
 
 
 class Dispositivos(db.Model):
@@ -54,30 +75,46 @@ class Dispositivos(db.Model):
 # creamos la ruta utilizando los metodos http
 @app.route("/escritorio", methods=["GET", "POST"])
 def ingreso():
-    # hacer la consulta y solo traer los de escritorio
-    dispositivos = Dispositivos.query.filter_by(tipoActivo="Escritorio").all()
     if request.method == "POST":
-
-        nuevo_dispositivo = Dispositivos(
-            area=request.form["area"],
-            colaborador=request.form["colaboradores"],
-            sede=request.form["sede"],
-            modelo=request.form["modelo_marca"],
-            serial=request.form["serial"],
-            movil=request.form["movil"],
-            contraseña=request.form["contrasena"],
-            fechacompra=request.form["fecha_compra"],
-            estado=request.form["estado"],
-            tipoactivo=request.form["tipo_activo"],
-            correo=request.form["correo"],
-            notas=request.form["notas"]
-        )
-        #  agregamos los datos para luego ser guardados en la base de datos
-        db.session.add(nuevo_dispositivo)
-        db.session.commit()
-        return "Información guardada con éxito"
-    else:
-        return render_template("escritorio.html", dispositivos=dispositivos)
+        if 'toggle_active' in request.form:
+            idusuario = request.form.get('idusuario')
+            dispositivo = Dispositivos.query.get_or_404(idusuario)
+            dispositivo.activos = not dispositivo.activos
+            try:
+                db.session.commit()
+                flash("Estado del dispositivo actualizado", "success")
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
+            return redirect(url_for('escritorio'))
+        
+        try:
+            nuevo_dispositivo = Dispositivos(
+                area=request.form["area"],
+                sede=request.form["sede"],
+                modelo=request.form["modelo_marca"],
+                colaborador=request.form["colaborador"],
+                serial=request.form["serial"],
+                contrasena=request.form["contrasena"],
+                fechaCompra=request.form["fecha_compra"],
+                estado=request.form["estado"],
+                tipoActivo=request.form["tipo_activo"],
+                correo=request.form["correo"],
+                notas=request.form["notas"],
+                activos=True  # Asumiendo que los dispositivos nuevos siempre se ingresan como activos
+            )
+            db.session.add(nuevo_dispositivo)
+            db.session.commit()
+            flash("Información guardada con éxito", "success")
+            return redirect(url_for('activos'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f"Error al enviar la información: {str(e)}", "error")
+    
+    # Filtrar solo dispositivos activos para mostrar en la tabla
+    dispositivos = Dispositivos.query.filter_by(activos=True, tipoActivo='Escritorio').all()
+    
+    return render_template('activos.html', dispositivos=dispositivos)
 
 
 @app.route('/')  # Ruta principal
@@ -164,8 +201,8 @@ def activos():
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f"Error al enviar la información: {str(e)}", "error")
-
-    dispositivos = Dispositivos.query.all()
+# realizamos la consulta y que solo nos muestre los activos
+    dispositivos = Dispositivos.query.filter_by(activos=True).all()
     return render_template('activos.html', dispositivos=dispositivos)
 
 
@@ -212,33 +249,53 @@ def actualizar(idusuario):
 def escritorio():
     return render_template('escritorio.html')
 
+@app.route('/colaboradores')
+def colaborador():
+    return render_template("colaboradores.html")
+
 
 @app.route('/portatiles', methods=["GET", "POST"])
 def portatiles():
-    # hacer la consulta y solo traer los de escritorio
-    dispositivos = Dispositivos.query.filter_by(tipoActivo="Portatil").all()
     if request.method == "POST":
-
-        nuevo_dispositivo = Dispositivos(
-            area=request.form["area"],
-            colaborador=request.form["colaboradores"],
-            sede=request.form["sede"],
-            modelo=request.form["modelo_marca"],
-            serial=request.form["serial"],
-            movil=request.form["movil"],
-            contraseña=request.form["contrasena"],
-            fechacompra=request.form["fecha_compra"],
-            estado=request.form["estado"],
-            tipoactivo=request.form["tipo_activo"],
-            correo=request.form["correo"],
-            notas=request.form["notas"]
-        )
-    #agregamos los datos para luego ser guardados en la base de datos
-        db.session.add(nuevo_dispositivo)
-        db.session.commit()
-        return "Información guardada con éxito"
-    else:
-        return render_template("portatil.html", dispositivos=dispositivos)
+        if 'toggle_active' in request.form:
+            idusuario = request.form.get('idusuario')
+            dispositivo = Dispositivos.query.get_or_404(idusuario)
+            dispositivo.activos = not dispositivo.activos
+            try:
+                db.session.commit()
+                flash("Estado del dispositivo actualizado", "success")
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
+            return redirect(url_for('activos'))
+        
+        try:
+            nuevo_dispositivo = Dispositivos(
+                area=request.form["area"],
+                sede=request.form["sede"],
+                modelo=request.form["modelo_marca"],
+                colaborador=request.form["colaborador"],
+                serial=request.form["serial"],
+                contrasena=request.form["contrasena"],
+                fechaCompra=request.form["fecha_compra"],
+                estado=request.form["estado"],
+                tipoActivo=request.form["tipo_activo"],
+                correo=request.form["correo"],
+                notas=request.form["notas"],
+                activos=True  # Asumiendo que los dispositivos nuevos siempre se ingresan como activos
+            )
+            db.session.add(nuevo_dispositivo)
+            db.session.commit()
+            flash("Información guardada con éxito", "success")
+            return redirect(url_for('activos'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f"Error al enviar la información: {str(e)}", "error")
+    
+    # Filtrar solo dispositivos activos para mostrar en la tabla
+    dispositivos = Dispositivos.query.filter_by(activos=True, tipoActivo='Portatil').all()
+    
+    return render_template('activos.html', dispositivos=dispositivos)
 
 
 @app.route('/impresoras', methods= ["GET", "POST"])
@@ -270,29 +327,46 @@ def impresoras():
 
 @app.route('/telefono', methods=["GET", "POST"])
 def telefono():
-    dispositivos = Dispositivos.query.filter_by(tipoActivo="Smartphone").all()
     if request.method == "POST":
-
-        nuevo_dispositivo = Dispositivos(
-            area=request.form["area"],
-            colaborador=request.form["colaboradores"],
-            sede=request.form["sede"],
-            modelo=request.form["modelo_marca"],
-            serial=request.form["serial"],
-            movil=request.form["movil"],
-            contraseña=request.form["contrasena"],
-            fechacompra=request.form["fecha_compra"],
-            estado=request.form["estado"],
-            tipoactivo=request.form["tipo_activo"],
-            correo=request.form["correo"],
-            notas=request.form["notas"]
-        )
-    #  agregamos los datos para luego ser guardados en la base de datos
-        db.session.add(nuevo_dispositivo)
-        db.session.commit()
-        return "Información guardada con éxito"
-    else:
-        return render_template("telefonos.html", dispositivos=dispositivos)
+        if 'toggle_active' in request.form:
+            idusuario = request.form.get('idusuario')
+            dispositivo = Dispositivos.query.get_or_404(idusuario)
+            dispositivo.activos = not dispositivo.activos
+            try:
+                db.session.commit()
+                flash("Estado del dispositivo actualizado", "success")
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
+            return redirect(url_for('activos'))
+        
+        try:
+            nuevo_dispositivo = Dispositivos(
+                area=request.form["area"],
+                sede=request.form["sede"],
+                modelo=request.form["modelo_marca"],
+                colaborador=request.form["colaborador"],
+                serial=request.form["serial"],
+                contrasena=request.form["contrasena"],
+                fechaCompra=request.form["fecha_compra"],
+                estado=request.form["estado"],
+                tipoActivo=request.form["tipo_activo"],
+                correo=request.form["correo"],
+                notas=request.form["notas"],
+                activos=True  # Asumiendo que los dispositivos nuevos siempre se ingresan como activos
+            )
+            db.session.add(nuevo_dispositivo)
+            db.session.commit()
+            flash("Información guardada con éxito", "success")
+            return redirect(url_for('activos'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f"Error al enviar la información: {str(e)}", "error")
+    
+    # Filtrar solo dispositivos activos para mostrar en la tabla
+    dispositivos = Dispositivos.query.filter_by(activos=True, tipoActivo='Smartphone').all()
+    
+    return render_template('telefonos.html', dispositivos=dispositivos)
     
 @app.route('/inhabilitados')
 def inhabilitado():

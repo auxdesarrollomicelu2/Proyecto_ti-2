@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title>Colaboradores</title>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet" />
+  
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var modal = document.getElementById('modal');
+      var modalContent = document.querySelector('.modal-content');
+      var closeModal = document.querySelector('.close');
+      var userInfos = {
+        user1: 'Información detallada del usuario 1.',
+        user2: 'Información detallada del usuario 2.',
+        user3: 'Información detallada del usuario 3.'
+        // Añadir más información para más usuarios según sea necesario
+      };
+    
+      // Función para abrir el modal y mostrar la información del usuario
+      function showModal(userId) {
+        modal.style.display = 'block';
+        document.getElementById('user-info').innerText = userInfos[userId];
+      }
+    
+      // Función para cerrar el modal
+      function closeModalFunc() {
+        modal.style.display = 'none';
+      }
+    
+      // Event listeners para mostrar y cerrar el modal
+      document.querySelectorAll('.user-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var userId = this.getAttribute('data-user');
+          showModal(userId);
+        });
+      });
+    
+      closeModal.addEventListener('click', closeModalFunc);
+      window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          closeModalFunc();
+        }
+      });
+    });
+    
+
+// Funcion para habilitar
+
+
+    </script>
+
+</head>
+<body>
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section">
+          <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg custom_nav-container ">
+              <a class="navbar-brand" href="{{ url_for('ingreso')}}">
+                <span>
+                  Micelu.co
+                </span>
+              </a>
+              <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+    
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                  <ul class="navbar-nav  ">
+                    <li class="nav-item ">
+                      <a class="nav-link" href="{{ url_for('ingreso')}}">INGRESO </a>
+                    </li>
+                    <li class="nav-item ">
+                      <a class="nav-link" href="{{ url_for('activos')}}"> ACTIVOS <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                      <a class="nav-link" href="{{ url_for('colaborador')}}"> COLABORADORES <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item ">
+                      <a class="nav-link" href="{{ url_for('inhabilitado')}}">INACTIVOS <span
+                          class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/logout">CERRAR SESION</a>
+                    </li>
+    
+                  </ul>
+                </div>
+              </div>
+    
+            </nav>
+          </div>
+        </header>
+        <!-- end header section -->
+        <div class="listacolaboradores">
+
+            <h1>Listado de Colaboradores</h1>
+        
+            <ul class="user-list">
+              <li class="user-item" data-user="user1">DAVID LEONARDO VARGAS BONILLA</li>
+              <li class="user-item" data-user="user2">CATHERINE QUIRAMA SALDARRIAGA </li>
+              <li class="user-item" data-user="user3">CAREN LORENA CASTIBLANCO</li>
+              
+            </ul>
+          </div>
+          
+          <div id="modal" class="modal">
+            <div class="modal-content">
+             <span class="close">&times;</span>
+              <h3>INFORMACIÓN DETALLADA DE COLABORADOR</h3>
+           
+            <form class="infogeneral">
+                <div class="formu">
+                    <label class="datos2" type="text" id="nombres">NOMBRES</label>
+                    <label class="datos2" type="text" id="cedula">CEDULA</label>
+                    <label class="datos2" type="text" id="cargo">CARGO</label>
+                    <label class="datos2" type="text" id="direccion">DIRECCIÓN</label>
+                </div>
+                <div class="formu">
+                    <label class="datos2" type="text" id="apellidos">APELLIDOS</label>
+                    <label class="datos2" type="tel" id="telefono">TELEFONO</label>
+                    <label class="datos2"type="email" id="correo">CORREO</label>
+                </div>
+               </form>
+        
+        
+              <div class="accesos">
+                
+                <h5> USUARIOS Y ACCESOS</h5>
+                <table class="usuariosaccesos">
+                    <thead>
+                        <tr>
+                            <th>Correo Corporativo</th>
+                            <th>Usuario General</th>
+                            <th>Contraseña Correo</th>
+                            <th>Contraseña Usuario</th>
+                            <th>Usuario Monday</th>
+                            <th>Contraseña Monday</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>calidad@micelu.co</td>
+                            <td>andres.velasquez</td>
+                            <td>password123</td>
+                            <td>password123</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                            
+                        </tr>
+                        
+                        <!-- ejemplos de datos -->
+                    </tbody>
+                </table>              
+              </div>         
+              <div class="asignados">
+                <h5> ACTIVOS ASIGNADOS</h5>
+                <table class="equiposasignados">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Activo</th>
+                            <th>Modelo</th>
+                            <th>Serial</th>
+                            <th>Contraseña</th>
+                            <th>Fecha de Compra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Computadora</td>
+                            <td>Dell XPS 15</td>
+                            <td>12345XYZ</td>
+                            <td>password123</td>
+                            <td>2023-01-15</td>
+                        </tr>
+                        <tr>
+                            <td>Impresora</td>
+                            <td>HP LaserJet Pro</td>
+                            <td>67890ABC</td>
+                            <td>password456</td>
+                            <td>2022-06-10</td>
+                        </tr>
+                        <tr>
+                            <td>Teléfono</td>
+                            <td>iPhone 12</td>
+                            <td>24680DEF</td>
+                            <td>password789</td>
+                            <td>2021-12-25</td>
+                        </tr>
+                        <!-- ejemplos de datos -->
+                    </tbody>
+                </table>    
+              </div>
+                <div>
+                 <input class="registro" type="submit" value="GUARDAR">
+                </div>   
+            </div>
+          </div>
+        
+        
+        
+          <script src="script.js"></script>
+        
+              
+    
+</body>
+</html>
