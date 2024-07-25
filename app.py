@@ -10,10 +10,10 @@ app.config["SECRET_KEY"] = "Secret"
 
 # Configuración de la base de datos PostgreSQL
 # postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway' #base datos Dispositivos
 app.config['SQLALCHEMY_BINDS'] = {
-    'db2': 'postgresql://postgres:aAB2Be35CBAd2GgA5*DdC45FaCf26G44@viaduct.proxy.rlwy.net:58920/railway',  # Base de EMPLEADOS
-    'db3': 'postgresql://postgres:E6C13EfeAbaFd2GA4fgCcAdC*g13324B@monorail.proxy.rlwy.net:25301/railway',  # Base de logistica
+    'db2': 'postgresql://postgresql://postgres:japrWZtfUvaBYEyfGtYKwmleuIYvKWMs@viaduct.proxy.rlwy.net:43934/railway',  # Base datos RH
+    'db3': 'postgresql://postgres:aAB2Be35CBAd2GgA5*DdC45FaCf26G44@viaduct.proxy.rlwy.net:58920/railway',  # Base empleados
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -33,23 +33,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 # definimos el modelo para la tabla y mapeamos la tabla dispositivos
 # debemos especificar el es quema en la base de datos para encontrar la tabla solicitada
-
-class Empleados(db.Model):
-    __bind_key__ = 'db2'
     
-
-    # Campos de la tabla Empleados
-    id = db.Column(db.String(100), primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False)
-    sede = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(60), nullable=False)
-    isAdmin = db.Column(db.Boolean, default=False)
-    jefeTienda = db.Column(db.Boolean, default=False)
-    isSede = db.Column(db.Boolean, default=False)
-    isTV = db.Column(db.Boolean, default=False)
-    password_secret=db.Column(db.String(60))
-    cedula=db.Column(db.String(100))
-    cargo=db.Column(db.Enum('Admin', 'jefeTienda', 'Sede','TV','servicioTecnico','vendedorMedellin','vendedorBogota','encargadoBodega','domiciliario','RH',name='cargo'))
+ 
 
 
 class Dispositivos(db.Model):
@@ -252,6 +237,7 @@ def escritorio():
 @app.route('/colaboradores')
 def colaborador():
     return render_template("colaboradores.html")
+
 
 
 @app.route('/portatiles', methods=["GET", "POST"])
