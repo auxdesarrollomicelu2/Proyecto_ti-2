@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash,  jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import distinct
@@ -55,6 +55,18 @@ class Dispositivos(db.Model):
     notas = db.Column(db.Text, nullable=True)
     activos = db.Column(db.Boolean, default=True)
     #habilitado= db.Column(db.Boolean, nullable=False,default=True)
+    
+class Colaboradores(db.Model):
+    __tablename__ = 'colaboradores'
+    __table_args__ = {'schema': 'activos_ti'}
+    idcolaborador = db.Column(db.Integer, primary_key=True)
+    nombres = db.Column(db.String(100), nullable=False)
+    cedula = db.Column(db.Integer())
+    cargo = db.Column(db.String(100))
+    correos = db.Column(db.String(100))
+    usuariomicel = db.Column(db.String(100))
+    contrasenas = db.Column(db.String(100))
+    jefeinmediato = db.Column(db.String(100))
 
 
 # creamos la ruta utilizando los metodos http
@@ -191,11 +203,7 @@ def activos():
     return render_template('activos.html', dispositivos=dispositivos)
 
 
-class Colaboradores(db.Model):
-    __tablename__ = 'colaboradores'
-    __table_args__ = {'schema': 'activos_ti'}
-    idcolaborador = db.Column(db.Integer, primary_key=True)
-    nombres = db.Column(db.String(100), nullable=False)
+    
 
 
 @app.route('/actualizar/<int:idusuario>', methods=['GET', 'POST'])
@@ -234,10 +242,45 @@ def actualizar(idusuario):
 def escritorio():
     return render_template('escritorio.html')
 
-@app.route('/colaboradores')
+@app.route('/colaboradores', methods=["GET", "POST"])
 def colaborador():
-    return render_template("colaboradores.html")
-
+    if request.method == "GET":
+        colaboradores = Colaboradores.query.all()
+        dispositivos = Dispositivos.query.all()
+       
+        # Crear un diccionario para almacenar los dispositivos de cada colaborador
+        dispositivos_por_colaborador = {}
+        for dispositivo in dispositivos:
+            if dispositivo.colaborador not in dispositivos_por_colaborador:
+                dispositivos_por_colaborador[dispositivo.colaborador] = []
+            dispositivos_por_colaborador[dispositivo.colaborador].append(dispositivo)
+       
+        return render_template("colaboradores.html",
+                               colaboradores=colaboradores,
+                               dispositivos_por_colaborador=dispositivos_por_colaborador)
+   
+    elif request.method == "POST":
+        colaborador_id = request.form.get('id')
+        colaborador = Colaboradores.query.get(colaborador_id)
+        if colaborador:
+            dispositivos_asignados = Dispositivos.query.filter_by(colaborador=colaborador.nombres).all()
+            return jsonify({
+                'nombres': colaborador.nombres,
+                'cedula': colaborador.cedula,
+                'cargo': colaborador.cargo,
+                'correos': colaborador.correos,
+                'usuariomicel': colaborador.usuariomicel,
+                'contrasenas': colaborador.contrasenas,
+                'jefeinmediato': colaborador.jefeinmediato,
+                'dispositivos': [{
+                    'tipo': d.tipoActivo,
+                    'modelo': d.modelo,
+                    'serial': d.serial,
+                    'contrasena': d.contrasena,
+                    'fecha_compra': d.fechaCompra
+                } for d in dispositivos_asignados]
+            })
+        return jsonify({'error': 'Colaborador no encontrado'}), 404
 
 
 @app.route('/portatiles', methods=["GET", "POST"])
