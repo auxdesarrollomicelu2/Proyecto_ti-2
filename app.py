@@ -260,27 +260,59 @@ def colaborador():
                                dispositivos_por_colaborador=dispositivos_por_colaborador)
    
     elif request.method == "POST":
-        colaborador_id = request.form.get('id')
-        colaborador = Colaboradores.query.get(colaborador_id)
-        if colaborador:
-            dispositivos_asignados = Dispositivos.query.filter_by(colaborador=colaborador.nombres).all()
-            return jsonify({
-                'nombres': colaborador.nombres,
-                'cedula': colaborador.cedula,
-                'cargo': colaborador.cargo,
-                'correos': colaborador.correos,
-                'usuariomicel': colaborador.usuariomicel,
-                'contrasenas': colaborador.contrasenas,
-                'jefeinmediato': colaborador.jefeinmediato,
-                'dispositivos': [{
-                    'tipo': d.tipoActivo,
-                    'modelo': d.modelo,
-                    'serial': d.serial,
-                    'contrasena': d.contrasena,
-                    'fecha_compra': d.fechaCompra
-                } for d in dispositivos_asignados]
-            })
-        return jsonify({'error': 'Colaborador no encontrado'}), 404
+        # Verificar si se está creando un nuevo colaborador o buscando uno existente
+        if 'id' in request.form:
+            # Buscar colaborador existente
+            colaborador_id = request.form.get('id')
+            colaborador = Colaboradores.query.get(colaborador_id)
+            if colaborador:
+                if 'contrasenas' in request.form:
+                    # Actualizar contraseña
+                    new_password = request.form.get('contrasenas')
+                    colaborador.contrasenas = new_password
+                    try:
+                        db.session.commit()
+                        return jsonify({'success': 'Contraseña actualizada exitosamente'})
+                    except Exception as e:
+                        db.session.rollback()
+                        return jsonify({'error': str(e)}), 500
+                else:
+                    dispositivos_asignados = Dispositivos.query.filter_by(colaborador=colaborador.nombres).all()
+                return jsonify({
+                    'nombres': colaborador.nombres,
+                    'cedula': colaborador.cedula,
+                    'cargo': colaborador.cargo,
+                    'correos': colaborador.correos,
+                    'usuariomicel': colaborador.usuariomicel,
+                    'contrasenas': colaborador.contrasenas,
+                    'jefeinmediato': colaborador.jefeinmediato,
+                    'dispositivos': [{
+                        'tipo': d.tipoActivo,
+                        'modelo': d.modelo,
+                        'serial': d.serial,
+                        'contrasena': d.contrasena,
+                        'fecha_compra': d.fechaCompra
+                    } for d in dispositivos_asignados]
+                })
+            return jsonify({'error': 'Colaborador no encontrado'}), 404
+        else:
+            # Crear nuevo colaborador
+            nuevo_colaborador = Colaboradores(
+                nombres=request.form.get('nombres'),
+                cedula=request.form.get('cedula'),
+                cargo=request.form.get('cargo'),
+                correos=request.form.get('correos'),
+                usuariomicel=request.form.get('usuariomicel'),
+                contrasenas=request.form.get('contrasenas'),
+                jefeinmediato=request.form.get('jefeinmediato')
+            )
+            try:
+                db.session.add(nuevo_colaborador)
+                db.session.commit()
+                return jsonify({'success': 'Colaborador agregado exitosamente', 'id': nuevo_colaborador.idcolaborador}), 201
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': str(e)}), 500
 
 
 @app.route('/portatiles', methods=["GET", "POST"])

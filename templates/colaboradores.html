@@ -22,64 +22,22 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- fonts style -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Roboto:400,700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
     <!-- responsive style -->
     <link href="{{ url_for('static', filename='css/responsive.css')}}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/escritorio.css')}}" rel="stylesheet" />
 
 
-    <script>
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var modal = document.getElementById('modal');
-            var modalContent = document.querySelector('.modal-content');
-            var closeModal = document.querySelector('.close');
-            var userInfos = {
-                user1: 'Información detallada del usuario 1.',
-                user2: 'Información detallada del usuario 2.',
-                user3: 'Información detallada del usuario 3.'
-                // Añadir más información para más usuarios según sea necesario
-            };
-
-            // Función para abrir el modal y mostrar la información del usuario
-            function showModal(userId) {
-                modal.style.display = 'block';
-                document.getElementById('user-info').innerText = userInfos[userId];
-            }
-
-            // Función para cerrar el modal
-            function closeModalFunc() {
-                modal.style.display = 'none';
-            }
-
-            // Event listeners para mostrar y cerrar el modal
-            document.querySelectorAll('.user-item').forEach(function (item) {
-                item.addEventListener('click', function () {
-                    var userId = this.getAttribute('data-user');
-                    showModal(userId);
-                });
-            });
-
-            closeModal.addEventListener('click', closeModalFunc);
-            window.addEventListener('click', function (event) {
-                if (event.target === modal) {
-                    closeModalFunc();
-                }
-            });
-        });
-
-
-        // Funcion para habilitar
-
-
-    </script>
-
+    
 </head>
 
 <body>
@@ -133,166 +91,329 @@
         <div class="listacolaboradores">
             <h1>Listado de Colaboradores</h1>
             <br>
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-5">
-                    <div class="input-group">
-                        <input id="searchInput" class="form-control border-dark with-icon" type="search"
-                            placeholder="Buscar activos" aria-label="Buscar">
-                        <button class="btnn1" type="button">
-                            <i class="bi bi-search"></i>
-                        </button>
+
+            <body>
+
+                <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title"  id="formModalLabel"> REGISTRAR INFORMACIÓN DEL COLABORADOR</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></i></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="colaboradorForm" class="infogeneral">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="nombres" class="form-label">NOMBRE COMPLETO:</label>
+                                                <input type="text" class="form-control" id="nombres" name="nombres"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="cedula" class="form-label">CEDULA:</label>
+                                                <input type="number" class="form-control" id="cedula" name="cedula"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="cargo">CARGO:</label required>
+                                                <select class="form-select" id="cargo" name="cargo">
+                                                    <option value="">Seleccione un cargo</option>
+                                                    {% for colaborador in colaboradores %}
+                                                    <option value="{{colaborador.cargo}}">{{colaborador.cargo}}</option>
+                                                    {% endfor %}
+                                                    <!-- Agregar lista de colaboradores -->
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="correos" class="form-label">CORREO:</label>
+                                                <input type="email" class="form-control" id="correos" name="correos"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="usuariomicel" class="form-label">USUARIO MI CELU:</label>
+                                                <input type="text" class="form-control" id="usuariomicel"
+                                                    name="usuariomicel" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="contrasenas" class="form-label">CONTRASEÑA:</label>
+                                                <input type="password" class="form-control" id="contrasenas"
+                                                    name="contrasenas" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="jefeinmediato">JEFE INMEDIATO:</label>
+                                                <select class="form-select" id="jefeinmediato" name="jefeinmediato">
+                                                    <option value="">Seleccione un Jefe</option>
+                                                    {% for colaborador in colaboradores %}
+                                                    <option value="{{colaborador.nombres}}">{{colaborador.nombres}}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="form-group text-center mt-4">
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" form="colaboradorForm" class="btn btn-dark">Guardar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ul class="user-list">
-                {% for colaborador in colaboradores %}
-                <li class="user-item" data-id="{{ colaborador.idcolaborador }}">{{ colaborador.nombres }}</li>
-                {% endfor %}
-            </ul>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-5">
+                        <div class="d-flex align-items-center">
+                            <div class="input-group flex-grow-1 me-2">
+                                <input id="searchInput" class="form-control border-dark with-icon" type="search"
+                                    placeholder="Buscar activos" aria-label="Buscar">
+                                <button class="btnn1" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-dark" id="openModalBtn">
+                                REGISTRAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="user-list">
+                    {% for colaborador in colaboradores %}
+                    <li class="user-item" data-id="{{ colaborador.idcolaborador }}">{{ colaborador.nombres }}</li>
+                    {% endfor %}
+                </ul>
+
         </div>
 
         {% for colaborador in colaboradores %}
         <div id="modal-{{ colaborador.idcolaborador }}" class="modal" style="display: none;">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h3 class="text-center">INFORMACIÓN DETALLADA DE COLABORADOR</h3>
-
-                <form class="infogeneral">
-                    <div class="container-fluid">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <div class="form-group1">
-                                    <label for="nombres">NOMBRES: {{ colaborador.nombres }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="cedula">CEDULA: {{ colaborador.cedula }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="cargo">CARGO: {{ colaborador.cargo }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="correos">CORREO: {{ colaborador.correos }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="usuariomicel">USUARIO MICELU: {{ colaborador.usuariomicel }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="contrasenas">CONTRASEÑA: {{ colaborador.contrasenas }}</label>
-                                </div>
-                                <div class="form-group1">
-                                    <label for="jefeinmediato">JEFE INMEDIATO: {{ colaborador.jefeinmediato }}</label>
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="formModalLabel">INFORMACIÓN DETALLADA DE COLABORADOR</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="infogeneral">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nombres" class="form-label">NOMBRES:</label>
+                                        <input type="text" class="form-control" id="nombres" name="nombres"
+                                            value="{{ colaborador.nombres }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cedula" class="form-label">CEDULA:</label>
+                                        <input type="text" class="form-control" id="cedula" name="cedula"
+                                            value="{{ colaborador.cedula }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cargo" class="form-label">CARGO:</label>
+                                        <input type="text" class="form-control" id="cargo" name="cargo"
+                                            value="{{ colaborador.cargo }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="correos" class="form-label">CORREO:</label>
+                                        <input type="email" class="form-control" id="correos" name="correos"
+                                            value="{{ colaborador.correos }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="usuariomicel" class="form-label">USUARIO MICELU:</label>
+                                        <input type="text" class="form-control" id="usuariomicel" name="usuariomicel"
+                                            value="{{ colaborador.usuariomicel }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contrasenas" class="form-label">CONTRASEÑA:</label>
+                                        <input type="password" class="form-control" id="contrasenas" name="contrasenas"
+                                            value="{{ colaborador.contrasenas }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="jefeinmediato" class="form-label">JEFE INMEDIATO:</label>
+                                        <input type="text" class="form-control" id="jefeinmediato" name="jefeinmediato"
+                                            value="{{ colaborador.jefeinmediato }}" readonly>
+                                    </div>
                                 </div>
                             </div>
+                        </form>
+
+                        <div class="accesos">
+                            <h3>USUARIOS Y ACCESOS</h3>
+                            <table class="usuariosaccesos">
+                                <thead>
+                                    <tr>
+                                        <th>Correo Corporativo</th>
+                                        <th>Usuario General</th>
+                                        <th>Contraseña Correo</th>
+                                        <th>Contraseña Usuario</th>
+                                        <th>Usuario Monday</th>
+                                        <th>Contraseña Monday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="td1">{{ colaborador.correos }}</td>
+                                        <td class="td1">{{ colaborador.usuariomicel }}</td>
+                                        <td class="td1">{{ colaborador.contrasenas }}</td>
+                                        <td class="td1">{{ colaborador.contrasenas }}</td>
+                                        <td class="td1">{{ colaborador.usuario_monday or 'N/A' }}</td>
+                                        <td class="td1">{{ colaborador.contrasena_monday or 'N/A' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="asignados">
+                            <h3>ACTIVOS ASIGNADOS</h3>
+                            <table class="equiposasignados">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo de Activo</th>
+                                        <th>Modelo</th>
+                                        <th>Serial</th>
+                                        <th>Contraseña</th>
+                                        <th>Fecha de Compra</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if colaborador.nombres in dispositivos_por_colaborador %}
+                                    {% for activo in dispositivos_por_colaborador[colaborador.nombres] %}
+                                    <tr>
+                                        <td class="td1">{{ activo.tipoActivo }}</td>
+                                        <td class="td1">{{ activo.modelo }}</td>
+                                        <td class="td1">{{ activo.serial }}</td>
+                                        <td class="td1">{{ activo.contrasena }}</td>
+                                        <td class="td1">{{ activo.fechaCompra }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="5">No hay activos asignados</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </form>
-
-                <div class="accesos">
-                    <h3>USUARIOS Y ACCESOS</h3>
-                    <table class="usuariosaccesos">
-                        <thead>
-                            <tr>
-                                <th>Correo Corporativo</th>
-                                <th>Usuario General</th>
-                                <th>Contraseña Correo</th>
-                                <th>Contraseña Usuario</th>
-                                <th>Usuario Monday</th>
-                                <th>Contraseña Monday</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="td1">{{ colaborador.correos }}</td>
-                                <td class="td1">{{ colaborador.usuariomicel }}</td>
-                                <td class="td1">{{ colaborador.contrasenas }}</td>
-                                <td class="td1">{{ colaborador.contrasenas }}</td>
-                                <td class="td1">{{ colaborador.usuario_monday or 'N/A' }}</td>
-                                <td class="td1">{{ colaborador.contrasena_monday or 'N/A' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="asignados">
-                    <h3>ACTIVOS ASIGNADOS</h3>
-                    <table class="equiposasignados">
-                        <thead>
-                            <tr>
-                                <th>Tipo de Activo</th>
-                                <th>Modelo</th>
-                                <th>Serial</th>
-                                <th>Contraseña</th>
-                                <th>Fecha de Compra</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if colaborador.nombres in dispositivos_por_colaborador %}
-                            {% for activo in dispositivos_por_colaborador[colaborador.nombres] %}
-                            <tr>
-                                <td class="td1">{{ activo.tipoActivo }}</td>
-                                <td class="td1">{{ activo.modelo }}</td>
-                                <td class="td1">{{ activo.serial }}</td>
-                                <td class="td1">{{ activo.contrasena }}</td>
-                                <td class="td1">{{ activo.fechaCompra }}</td>
-                            </tr>
-                            {% endfor %}
-                            {% else %}
-                            <tr>
-                                <td colspan="5">No hay activos asignados</td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
+
         {% endfor %}
-    </div>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var modals = document.querySelectorAll('.modal');
-            var userItems = document.querySelectorAll('.user-item');
-            var closeButtons = document.querySelectorAll('.close');
+        <!------modal para lsita de colaboradores-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var modals = document.querySelectorAll('.modal');
+                var userItems = document.querySelectorAll('.user-item');
+                var closeButtons = document.querySelectorAll('.close');
+                var closeButtons = document.querySelectorAll('.btn-close');
 
-            userItems.forEach(function (item) {
-                item.addEventListener('click', function () {
-                    var modalId = 'modal-' + this.getAttribute('data-id');
-                    document.getElementById(modalId).style.display = 'block';
+                userItems.forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        var modalId = 'modal-' + this.getAttribute('data-id');
+                        document.getElementById(modalId).style.display = 'block';
+                    });
+                });
+
+                closeButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        this.closest('.modal').style.display = 'none';
+                    });
+                });
+
+                window.addEventListener('click', function (event) {
+                    modals.forEach(function (modal) {
+                        if (event.target == modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
                 });
             });
+        </script>
+        <!---- buscador-->
+        <script>
+            document.getElementById('searchInput').addEventListener('input', function () {
+                let searchQuery = this.value.toLowerCase();
+                let userItems = document.querySelectorAll('.user-item');
 
-            closeButtons.forEach(function (button) {
-                button.addEventListener('click', function () {
-                    this.closest('.modal').style.display = 'none';
-                });
-            });
-
-            window.addEventListener('click', function (event) {
-                modals.forEach(function (modal) {
-                    if (event.target == modal) {
-                        modal.style.display = 'none';
+                userItems.forEach(function (item) {
+                    let itemName = item.textContent.toLowerCase();
+                    if (itemName.includes(searchQuery)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
                     }
                 });
             });
-        });
-    </script>
-    <script>
-        document.getElementById('searchInput').addEventListener('input', function () {
-            let searchQuery = this.value.toLowerCase();
-            let userItems = document.querySelectorAll('.user-item');
+        </script>
+        <!---- modal para agregar un colaborador -->
+        <script>
+        
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                var modal = new bootstrap.Modal(document.getElementById('formModal'));
+                var openModalBtn = document.getElementById('openModalBtn');
+                var closeModalBtn = document.querySelector('.btn-close');
+                var form = document.getElementById('colaboradorForm');
 
-            userItems.forEach(function (item) {
-                let itemName = item.textContent.toLowerCase();
-                if (itemName.includes(searchQuery)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
+
+                // Función para abrir el modal
+                function showModal() {
+                    modal.show();
                 }
-            });
-        });
-    </script>
 
+                // Función para cerrar el modal
+                function closeModal() {
+                    modal.hide();
+                }
+
+                // Event listener para abrir el modal
+                openModalBtn.addEventListener('click', showModal);
+
+                // Event listener para cerrar el modal
+                closeModalBtn.addEventListener('click', closeModal);
+
+                // Event listener para el envío del formulario
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    var formData = new FormData(this);
+
+                    fetch('/colaboradores', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                            } else {
+                                alert('Colaborador agregado exitosamente');
+                                closeModal();
+                                this.reset();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Ocurrió un error al guardar el colaborador');
+                        });
+                });
+
+                // Cerrar el modal si se hace clic fuera de él
+                window.addEventListener('click', function (event) {
+                    if (event.target === document.getElementById('formModal')) {
+                        closeModal();
+                    }
+                });
+            });
+            
+            
+        </script>
 </body>
 
 </html>
