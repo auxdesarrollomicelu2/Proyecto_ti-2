@@ -37,10 +37,17 @@
     <link href="{{ url_for('static', filename='css/escritorio.css')}}" rel="stylesheet" />
 
 
-    
+
 </head>
 
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
     <div class="hero_area">
         <!-- header section strats -->
         <header class="header_section">
@@ -99,7 +106,7 @@
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h3 class="modal-title"  id="formModalLabel"> REGISTRAR INFORMACIÓN DEL COLABORADOR</h3>
+                                <h3 class="modal-title" id="formModalLabel"> REGISTRAR INFORMACIÓN DEL COLABORADOR</h3>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></i></button>
                             </div>
@@ -226,16 +233,31 @@
                                             value="{{ colaborador.usuariomicel }}" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="contrasenas" class="form-label">CONTRASEÑA:</label>
-                                        <input type="password" class="form-control" id="contrasenas" name="contrasenas"
-                                            value="{{ colaborador.contrasenas }}" readonly>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
                                         <label for="jefeinmediato" class="form-label">JEFE INMEDIATO:</label>
                                         <input type="text" class="form-control" id="jefeinmediato" name="jefeinmediato"
                                             value="{{ colaborador.jefeinmediato }}" readonly>
                                     </div>
+                                    <!-- Sección de contraseña reorganizada -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group password-field">
+                                            <label for="contrasenas" class="form-label">CONTRASEÑA:</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="contrasena-{{ colaborador.idcolaborador }}" name="contrasenas"
+                                                    value="{{ colaborador.contrasenas }}">
+                                                <button class="btn btn-outline-secondary toggle-password" type="button"
+                                                    onclick="togglePassword('contrasena-{{ colaborador.idcolaborador }}')">
+                                                    👁️
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                            <br>
+                            <div class="save-changes-container">
+                                <button type="button" class="btn btn-save-changes"
+                                    data-id="{{ colaborador.idcolaborador }}">Guardar Cambios</button>
                             </div>
                         </form>
 
@@ -248,8 +270,8 @@
                                         <th>Usuario General</th>
                                         <th>Contraseña Correo</th>
                                         <th>Contraseña Usuario</th>
-                                        <th>Usuario Monday</th>
-                                        <th>Contraseña Monday</th>
+                                        <th>Email Monday</th>
+                                        <th>Pass Monday</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -258,8 +280,8 @@
                                         <td class="td1">{{ colaborador.usuariomicel }}</td>
                                         <td class="td1">{{ colaborador.contrasenas }}</td>
                                         <td class="td1">{{ colaborador.contrasenas }}</td>
-                                        <td class="td1">{{ colaborador.usuario_monday or 'N/A' }}</td>
-                                        <td class="td1">{{ colaborador.contrasena_monday or 'N/A' }}</td>
+                                        <td class="td1">{{ colaborador.emailmonday or 'N/A' }}</td>
+                                        <td class="td1">{{ colaborador.passmonday or 'N/A' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -300,11 +322,9 @@
                 </div>
             </div>
         </div>
-
         {% endfor %}
-        </div>
 
-        <!------modal para lsita de colaboradores-->
+        <!------modal para lista de colaboradores-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -312,6 +332,9 @@
                 var userItems = document.querySelectorAll('.user-item');
                 var closeButtons = document.querySelectorAll('.close');
                 var closeButtons = document.querySelectorAll('.btn-close');
+
+
+
 
                 userItems.forEach(function (item) {
                     item.addEventListener('click', function () {
@@ -351,43 +374,56 @@
                 });
             });
         </script>
-        <!---- modal para agregar un colaborador -->
+
+
         <script>
-        
+            function togglePassword(inputId) {
+                var input = document.getElementById(inputId);
+                if (input.type === "password") {
+                    input.type = "text";
+                } else {
+                    input.type = "password";
+                }
+            }
+
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = new bootstrap.Modal(document.getElementById('formModal'));
+                const form = document.querySelector('form');
+                const openModalBtn = document.getElementById('openModalBtn');
+                const closeModalBtn = document.querySelector('.btn-close');
             
-            document.addEventListener('DOMContentLoaded', function () {
-                var modal = new bootstrap.Modal(document.getElementById('formModal'));
-                var openModalBtn = document.getElementById('openModalBtn');
-                var closeModalBtn = document.querySelector('.btn-close');
-                var form = document.getElementById('colaboradorForm');
-
-
                 // Función para abrir el modal
                 function showModal() {
                     modal.show();
                 }
-
+            
                 // Función para cerrar el modal
                 function closeModal() {
                     modal.hide();
                 }
-
+            
                 // Event listener para abrir el modal
-                openModalBtn.addEventListener('click', showModal);
-
+                if (openModalBtn) {
+                    openModalBtn.addEventListener('click', showModal);
+                }
+            
                 // Event listener para cerrar el modal
-                closeModalBtn.addEventListener('click', closeModal);
-
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', closeModal);
+                }
+            
                 // Event listener para el envío del formulario
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    var formData = new FormData(this);
-
-                    fetch('/colaboradores', {
-                        method: 'POST',
-                        body: formData
-                    })
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+            
+                        var formData = new FormData(this);
+            
+                        fetch('/colaboradores', {
+                            method: 'POST',
+                            body: formData
+                        })
                         .then(response => response.json())
                         .then(data => {
                             if (data.error) {
@@ -402,17 +438,58 @@
                             console.error('Error:', error);
                             alert('Ocurrió un error al guardar el colaborador');
                         });
-                });
-
+                    });
+                }
+            
                 // Cerrar el modal si se hace clic fuera de él
-                window.addEventListener('click', function (event) {
+                window.addEventListener('click', function(event) {
                     if (event.target === document.getElementById('formModal')) {
                         closeModal();
                     }
                 });
+            
+                // Función para alternar la visibilidad de la contraseña
+                window.togglePassword = function(inputId) {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.type = input.type === 'password' ? 'text' : 'password';
+                    }
+                };
+            
+                // Event listener para actualizar contraseña
+                document.querySelectorAll('.btn-save-changes').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const colaboradorId = this.getAttribute('data-id');
+                        const passwordInput = document.getElementById(`contrasena-${colaboradorId}`);
+                        if (passwordInput) {
+                            const newPassword = passwordInput.value;
+            
+                            // Enviar solicitud AJAX para actualizar la contraseña
+                            fetch('/colaboradores', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `id=${colaboradorId}&contrasenas=${encodeURIComponent(newPassword)}`
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Contraseña actualizada exitosamente');
+                                } else {
+                                    alert('Error al actualizar la contraseña: ' + data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error al actualizar la contraseña');
+                            });
+                        }
+                    });
+                });
             });
-            
-            
+
+
         </script>
 </body>
 

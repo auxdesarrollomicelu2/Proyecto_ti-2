@@ -5,14 +5,15 @@ from sqlalchemy import distinct
 import psycopg2
 from pprint import pprint
 
-app = app = Flask(__name__)
+app =  Flask(__name__)
 app.config["SECRET_KEY"] = "Secret"
 
 # Configuración de la base de datos PostgreSQL
 # postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway' #base datos Dispositivos
+# base datos Dispositivos
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WeLZnkiKBsfVFvkaRHWqfWtGzvmSnOUn@viaduct.proxy.rlwy.net:35149/railway'
 app.config['SQLALCHEMY_BINDS'] = {
-    'db2': 'postgresql://postgresql://postgres:japrWZtfUvaBYEyfGtYKwmleuIYvKWMs@viaduct.proxy.rlwy.net:43934/railway',  # Base datos RH
+    'db2': 'postgresql://postgres:japrWZtfUvaBYEyfGtYKwmleuIYvKWMs@viaduct.proxy.rlwy.net:43934/railway',  # Base datos RH
     'db3': 'postgresql://postgres:aAB2Be35CBAd2GgA5*DdC45FaCf26G44@viaduct.proxy.rlwy.net:58920/railway',  # Base empleados
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -33,8 +34,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 # definimos el modelo para la tabla y mapeamos la tabla dispositivos
 # debemos especificar el es quema en la base de datos para encontrar la tabla solicitada
-    
- 
 
 
 class Dispositivos(db.Model):
@@ -54,8 +53,9 @@ class Dispositivos(db.Model):
     correo = db.Column(db.String(100), nullable=False)
     notas = db.Column(db.Text, nullable=True)
     activos = db.Column(db.Boolean, default=True)
-    #habilitado= db.Column(db.Boolean, nullable=False,default=True)
-    
+    # habilitado= db.Column(db.Boolean, nullable=False,default=True)
+
+
 class Colaboradores(db.Model):
     __tablename__ = 'colaboradores'
     __table_args__ = {'schema': 'activos_ti'}
@@ -67,6 +67,8 @@ class Colaboradores(db.Model):
     usuariomicel = db.Column(db.String(100))
     contrasenas = db.Column(db.String(100))
     jefeinmediato = db.Column(db.String(100))
+    emailmonday = db.Column(db.String(100))
+    passmonday=db.Column(db.String(100))
 
 
 # creamos la ruta utilizando los metodos http
@@ -83,8 +85,8 @@ def ingreso():
             except SQLAlchemyError as e:
                 db.session.rollback()
                 flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
-            return redirect(url_for('escritorio'))
-        
+            return redirect(url_for('ingreso'))  # Redirige a la misma ruta después de actualizar el estado
+
         try:
             nuevo_dispositivo = Dispositivos(
                 area=request.form["area"],
@@ -103,15 +105,17 @@ def ingreso():
             db.session.add(nuevo_dispositivo)
             db.session.commit()
             flash("Información guardada con éxito", "success")
-            return redirect(url_for('activos'))
+            return redirect(url_for('ingreso'))  # Redirige a la misma ruta después de agregar un dispositivo
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f"Error al enviar la información: {str(e)}", "error")
-    
-    # Filtrar solo dispositivos activos para mostrar en la tabla
-    dispositivos = Dispositivos.query.filter_by(activos=True, tipoActivo='Escritorio').all()
-    
-    return render_template('activos.html', dispositivos=dispositivos)
+
+    # Filtrar solo dispositivos activos de tipo Escritorio para mostrar en la tabla
+    dispositivos = Dispositivos.query.filter_by(
+        activos=True, tipoActivo='Escritorio').all()
+
+    return render_template('escritorio.html', dispositivos=dispositivos)
+
 
 
 @app.route('/')  # Ruta principal
@@ -126,7 +130,7 @@ def ingresoactivos():
         try:
             movil = request.form.get("movil", "")
             tipo_activo = request.form.get("tipo_activo")
-            
+
             # Si el tipo de activo no es Smartphone, establecemos movil como una cadena vacía
             if tipo_activo != "Smartphone":
                 movil = ""
@@ -155,7 +159,7 @@ def ingresoactivos():
             flash(f"Error al enviar la información: {str(e)}", "danger")
             # No retornamos aquí, dejamos que continúe al código después del if
             # Este código se ejecutará tanto para GET como para POST después de un error
-            
+
     dispositivos = Dispositivos.query.all()
     colaboradores = Colaboradores.query.order_by(Colaboradores.nombres).all()
     return render_template('ingresoactivos.html', dispositivos=dispositivos, colaboradores=colaboradores)
@@ -176,7 +180,7 @@ def activos():
                 db.session.rollback()
                 flash(f"Error al actualizar el estado del dispositivo: {str(e)}", "error")
             return redirect(url_for('activos'))
-        
+
         try:
             nuevo_dispositivo = Dispositivos(
                 area=request.form["area"],
@@ -198,22 +202,21 @@ def activos():
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f"Error al enviar la información: {str(e)}", "error")
-# realizamos la consulta y que solo nos muestre los activos
+
+    # Realizamos la consulta y mostramos solo los dispositivos activos
     dispositivos = Dispositivos.query.filter_by(activos=True).all()
     return render_template('activos.html', dispositivos=dispositivos)
-
-
-    
 
 
 @app.route('/actualizar/<int:idusuario>', methods=['GET', 'POST'])
 def actualizar(idusuario):
     dispositivo = Dispositivos.query.get_or_404(idusuario)
-   
+
     # Obtener todos los colaboradores únicos
     colaboradores = db.session.query(Dispositivos.colaborador).distinct().all()
-    colaboradores = [c[0] for c in colaboradores if c[0]]  # Eliminar valores nulos o vacíos
-   
+    # Eliminar valores nulos o vacíos
+    colaboradores = [c[0] for c in colaboradores if c[0]]
+
     if request.method == 'POST':
         try:
             dispositivo.area = request.form['area']
@@ -228,56 +231,58 @@ def actualizar(idusuario):
             dispositivo.tipoActivo = request.form['tipo_activo']
             dispositivo.correo = request.form['correo']
             dispositivo.notas = request.form.get('notas')
-           
+
             db.session.commit()
             flash('Dispositivo actualizado con éxito', 'success')
             return redirect(url_for('activos'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Error al actualizar el dispositivo: {str(e)}', 'error')
-   
+
     return render_template('actualizar.html', dispositivo=dispositivo, colaboradores=colaboradores)
+
 
 @app.route('/escritorio')
 def escritorio():
     return render_template('escritorio.html')
+
 
 @app.route('/colaboradores', methods=["GET", "POST"])
 def colaborador():
     if request.method == "GET":
         colaboradores = Colaboradores.query.all()
         dispositivos = Dispositivos.query.all()
-       
+
         # Crear un diccionario para almacenar los dispositivos de cada colaborador
         dispositivos_por_colaborador = {}
         for dispositivo in dispositivos:
             if dispositivo.colaborador not in dispositivos_por_colaborador:
                 dispositivos_por_colaborador[dispositivo.colaborador] = []
-            dispositivos_por_colaborador[dispositivo.colaborador].append(dispositivo)
-       
+            dispositivos_por_colaborador[dispositivo.colaborador].append(
+                dispositivo)
+
         return render_template("colaboradores.html",
                                colaboradores=colaboradores,
                                dispositivos_por_colaborador=dispositivos_por_colaborador)
-   
+
     elif request.method == "POST":
         # Verificar si se está creando un nuevo colaborador o buscando uno existente
-        if 'id' in request.form:
+        if 'id' in request.form and 'contrasenas' in request.form:
             # Buscar colaborador existente
             colaborador_id = request.form.get('id')
             colaborador = Colaboradores.query.get(colaborador_id)
             if colaborador:
-                if 'contrasenas' in request.form:
                     # Actualizar contraseña
-                    new_password = request.form.get('contrasenas')
-                    colaborador.contrasenas = new_password
-                    try:
-                        db.session.commit()
-                        return jsonify({'success': 'Contraseña actualizada exitosamente'})
-                    except Exception as e:
-                        db.session.rollback()
-                        return jsonify({'error': str(e)}), 500
-                else:
-                    dispositivos_asignados = Dispositivos.query.filter_by(colaborador=colaborador.nombres).all()
+                new_password = request.form.get('contrasenas')
+                colaborador.contrasenas = new_password
+                try:
+                    db.session.commit()
+                    return jsonify({'success': 'Contraseña actualizada exitosamente'})
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({'error': str(e)}), 500
+            else:
+                dispositivos_asignados = Dispositivos.query.filter_by(colaborador=colaborador.nombres).all()
                 return jsonify({
                     'nombres': colaborador.nombres,
                     'cedula': colaborador.cedula,
@@ -286,6 +291,8 @@ def colaborador():
                     'usuariomicel': colaborador.usuariomicel,
                     'contrasenas': colaborador.contrasenas,
                     'jefeinmediato': colaborador.jefeinmediato,
+                    'emailmonday' : colaborador.emailmonday,
+                    'passmonday': colaborador.passmonday,
                     'dispositivos': [{
                         'tipo': d.tipoActivo,
                         'modelo': d.modelo,
@@ -294,7 +301,7 @@ def colaborador():
                         'fecha_compra': d.fechaCompra
                     } for d in dispositivos_asignados]
                 })
-            return jsonify({'error': 'Colaborador no encontrado'}), 404
+           
         else:
             # Crear nuevo colaborador
             nuevo_colaborador = Colaboradores(
@@ -304,7 +311,9 @@ def colaborador():
                 correos=request.form.get('correos'),
                 usuariomicel=request.form.get('usuariomicel'),
                 contrasenas=request.form.get('contrasenas'),
-                jefeinmediato=request.form.get('jefeinmediato')
+                jefeinmediato=request.form.get('jefeinmediato'),
+                emailmonday=request.form.get('emailmonday'),
+                passmonday=request.form.get('passmonday')
             )
             try:
                 db.session.add(nuevo_colaborador)
@@ -366,12 +375,12 @@ def impresoras():
 
         nuevo_dispositivo = Dispositivos(
             area=request.form["area"],
-            colaborador=request.form["colaboradores"],
+            colaborador=request.form["colaborador"],
             sede=request.form["sede"],
             modelo=request.form["modelo_marca"],
             serial=request.form["serial"],
             movil=request.form["movil"],
-            contraseña=request.form["contrasena"],
+            contrasena=request.form["contrasena"],
             fechacompra=request.form["fecha_compra"],
             estado=request.form["estado"],
             tipoactivo=request.form["tipo_activo"],

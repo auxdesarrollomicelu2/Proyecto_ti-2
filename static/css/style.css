@@ -720,11 +720,13 @@ body {
 .form-group {
   flex: 1 1 calc(50% - 20px);
   box-sizing: border-box;
+  font-family: 'Poppins' sans-serif;
 }
 .form-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  font-family: 'Poppins' sans-serif;
 }
 .form-group input,
 .form-group select {
@@ -946,6 +948,7 @@ input:checked + .slider:before {
   width: 100%;
   height: calc(100% - 0px); 
   background-color: rgba(0, 0, 0, 0.5);
+  
 }
 
 .modal-content {
@@ -1141,6 +1144,8 @@ tr:hover {
   height: auto;
   max-height: 90vh;
   overflow-y: auto;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+
 }
 
 .close {
@@ -1200,6 +1205,7 @@ tr:hover {
   flex-direction: column;
   height: 100%;
   border-radius: 15px;
+  transition: transform 0.3s ease-in-out;
 }
 /* estilos para los input*/
 .form-control, .form-select {
@@ -1211,15 +1217,18 @@ tr:hover {
 /* estilos para el label*/
 .form-label {
  font-weight: 600;
- color: #495057;
+ color: #696f75;
 }
+/* Estilo para el modal*/
 .modal-dialog {
   display: flex;
     flex-direction: column;
     height: 120%; /* Ajusta este valor según sea necesario */
     max-height: 100vh; /* Ajusta la altura máxima según sea necesario */
-    width: 900px;
-    max-width: 110%;
+    width: 100%;
+    max-width: 300px;
+    overflow: auto;
+    
 }
 .btn {
   padding: 10px 20px;
@@ -1257,4 +1266,38 @@ tr:hover {
   max-width: 95%;
   max-height: 100vh;
 
+}
+.modal-body {
+  position: relative;
+  padding-bottom: 60px; /* Espacio para el botón */
+}
+
+.save-changes-container {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding-top: 30px;
+}
+
+.btn-save-changes {
+  padding: 8px 30px;
+  font-size: 16px;
+  background-color: 000000; /* Color primario de Bootstrap */
+  border-color: #ffffff;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  font-family: "Poppins", sans-serif;
+}
+.toggle-password {
+  background-color: #000000;
+  border: 2px solid #ced4da;
+  border-left: none; /* Elimina el borde izquierdo */
+  border-radius: 0 8px 8px 0; /* Redondea los bordes del botón */
+  cursor: pointer;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  transition: background-color 0.3s, border-color 0.3s;
 }
