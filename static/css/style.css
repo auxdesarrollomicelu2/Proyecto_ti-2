@@ -68,6 +68,7 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   font-family: "Poppins", sans-serif;
+  margin-top: 10px;
 }
 
 .btn-box a {
@@ -962,6 +963,7 @@ input:checked + .slider:before {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     
+    
 }
 
 .form-group1 {
@@ -982,8 +984,8 @@ input:checked + .slider:before {
 .modal-content h3 {
   margin-bottom: 10px;
   text-align: center;
-  font-family: "Poppins", sans-serif;;
-  color: #007bff;
+  font-family: "Poppins", sans-serif;
+  color: #0033A0;
   
   
 }
@@ -1188,6 +1190,8 @@ tr:hover {
 .form-select {
   width: 100%; /* Ajusta el ancho para que ocupe todo el espacio del contenedor */
   max-width: 100%; /* Asegura que no exceda el ancho del contenedor */
+  font-family: "Poppins", sans-serif;
+ 
 }
 
 .modal-backdrop {
@@ -1198,6 +1202,7 @@ tr:hover {
 }
 .custom-modal-content {
   height: 80vh;
+  
 
 }
 .modal-content {
@@ -1228,6 +1233,7 @@ tr:hover {
     width: 100%;
     max-width: 300px;
     overflow: auto;
+    
     
 }
 .btn {
@@ -1265,8 +1271,10 @@ tr:hover {
 .modal-dialog.modal-xl {
   max-width: 95%;
   max-height: 100vh;
+  
 
 }
+
 .modal-body {
   position: relative;
   padding-bottom: 60px; /* Espacio para el botón */
@@ -1284,7 +1292,7 @@ tr:hover {
 .btn-save-changes {
   padding: 8px 30px;
   font-size: 16px;
-  background-color: 000000; /* Color primario de Bootstrap */
+  background-color: 000000; 
   border-color: #ffffff;
   color: white;
   border-radius: 4px;
